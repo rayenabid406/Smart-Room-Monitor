@@ -26,7 +26,7 @@ Arduino formats the sensor values into a text string like:
 L:350 S:128 T:29.4
 
 
-Arduino sends these packets to the STM32 over UART2.
+Arduino sends these packets to the STM32 over UART2.(PC is the bridge)
 
 The STM32 receives each packet using bare-metal UART code.
 No HAL. No libraries. Everything is manual and lightweight.
@@ -40,6 +40,8 @@ Turns Blue LED ON for temperature updates
 Turns Red LED ON for sound spikes
 
 Flashes LEDs whenever new data is received
+
+Data and sensor values graphs are shown on the pc in real Time with Warning messages.
 
 The system updates in real time, allowing you to watch the LEDs reflect sensor changes immediately.
 
