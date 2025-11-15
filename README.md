@@ -43,4 +43,4 @@ Flashes LEDs whenever new data is received
 
 The system updates in real time, allowing you to watch the LEDs reflect sensor changes immediately.
 
-NOTE: i only used arduino uno because the stm32 gave me a hard time with the adc readings either constant with barely any changes just nonsense and i think this is due to the board having many conflicts visible even on cubeMx so i had to go with the arduino for the adc readings
+NOTE: i only used arduino uno because the stm32 gave me a hard time with the adc readings either constant with barely any changes just nonsense and i think this is due to the board having many pins conflicts visible even on cubeMx so i had to go with the arduino for the adc readings
