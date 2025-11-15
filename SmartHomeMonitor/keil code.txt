@@ -1,0 +1,108 @@
+#include "stm32l476xx.h"
+
+// LED pins
+#define RED_LED_PIN   0   // PA0
+#define YELLOW_LED_PIN 1  // PA1
+#define GREEN_LED_PIN 1   // PC1
+
+// Function prototypes
+void SystemClock_Config(void);
+void GPIO_Init(void);
+void UART2_Init(void);
+char UART2_ReceiveChar(void);
+int str_equal(char *str, char *target);
+void delay(volatile uint32_t count);
+
+int main(void) {
+    SystemClock_Config();
+    GPIO_Init();
+    UART2_Init();
+
+    char buffer[16];
+    int idx = 0;
+
+    while (1) {
+        char c = UART2_ReceiveChar();
+
+        // End of message
+        if (c == '\n' || c == '\r') {
+            buffer[idx] = '\0'; // terminate string
+            idx = 0;
+
+            // Simple string comparison without strcmp
+            if (str_equal(buffer, "FLAME")) {
+                GPIOA->ODR |= (1 << RED_LED_PIN);
+                GPIOA->ODR &= ~(1 << YELLOW_LED_PIN);
+                GPIOC->ODR &= ~(1 << GREEN_LED_PIN);
+            } else if (str_equal(buffer, "LIGHT")) {
+                GPIOA->ODR &= ~(1 << RED_LED_PIN);
+                GPIOA->ODR |= (1 << YELLOW_LED_PIN);
+                GPIOC->ODR &= ~(1 << GREEN_LED_PIN);
+            } else if (str_equal(buffer, "LOUD")) {
+                GPIOA->ODR &= ~(1 << RED_LED_PIN);
+                GPIOA->ODR &= ~(1 << YELLOW_LED_PIN);
+                GPIOC->ODR |= (1 << GREEN_LED_PIN);
+            } else if (str_equal(buffer, "COMFY")) {
+                GPIOA->ODR &= ~((1 << RED_LED_PIN) | (1 << YELLOW_LED_PIN));
+                GPIOC->ODR &= ~(1 << GREEN_LED_PIN);
+            }
+
+        } else {
+            // Store character
+            if (idx < 15) {
+                buffer[idx++] = c;
+            }
+        }
+    }
+}
+
+// Simple string compare
+int str_equal(char *str, char *target) {
+    while (*str && *target) {
+        if (*str != *target) return 0;
+        str++;
+        target++;
+    }
+    return (*str == '\0' && *target == '\0');
+}
+
+// Clock setup
+void SystemClock_Config(void) {
+    RCC->AHB2ENR |= RCC_AHB2ENR_GPIOAEN | RCC_AHB2ENR_GPIOCEN;
+    RCC->APB1ENR1 |= RCC_APB1ENR1_USART2EN;
+}
+
+// GPIO init
+void GPIO_Init(void) {
+    // PA0, PA1 as output
+    GPIOA->MODER &= ~((3<<0) | (3<<2));
+    GPIOA->MODER |=  ((1<<0) | (1<<2));
+    GPIOA->OTYPER &= ~((1<<0)|(1<<1));
+
+    // PC1 as output
+    GPIOC->MODER &= ~(3<<2);
+    GPIOC->MODER |= (1<<2);
+    GPIOC->OTYPER &= ~(1<<1);
+
+    // PA2(TX), PA3(RX) for UART2 AF7
+    GPIOA->MODER &= ~((3<<4)|(3<<6));
+    GPIOA->MODER |= ((2<<4)|(2<<6)); // AF
+    GPIOA->AFR[0] |= (7<<8)|(7<<12); // AF7
+}
+
+// UART2 init 115200 baud
+void UART2_Init(void) {
+    USART2->BRR = 4000000 / 115200; // assuming 4 MHz HSI
+    USART2->CR1 = USART_CR1_TE | USART_CR1_RE | USART_CR1_UE;
+}
+
+// Receive char blocking
+char UART2_ReceiveChar(void) {
+    while (!(USART2->ISR & USART_ISR_RXNE));
+    return USART2->RDR;
+}
+
+// Delay
+void delay(volatile uint32_t count) {
+    while(count--) __NOP();
+}

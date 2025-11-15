@@ -1,0 +1,35 @@
+// Pin definitions
+const int PHOTO_PIN = A0;
+const int FLAME_PIN = A3;
+const int SOUND_PIN = A4;
+
+void setup() {
+  Serial.begin(115200); // UART to STM32 or PC
+  pinMode(PHOTO_PIN, INPUT);
+  pinMode(FLAME_PIN, INPUT);
+  pinMode(SOUND_PIN, INPUT);
+}
+
+void loop() {
+  // Read sensors
+  int photoValue = analogRead(PHOTO_PIN);
+  int soundRaw = analogRead(SOUND_PIN);
+  int flameraw = analogRead(FLAME_PIN);
+
+  // Smooth flame readings (average of 10 samples)
+ 
+ 
+    flameraw = analogRead(FLAME_PIN);
+  
+
+
+  // Send formatted string
+  Serial.print("PHOTO:");
+  Serial.print(photoValue);
+  Serial.print(",FLAME:");
+  Serial.print(flameraw);
+  Serial.print(",SOUND:");
+  Serial.println(soundRaw);
+
+  delay(100); // 100ms = 10 readings/sec
+}

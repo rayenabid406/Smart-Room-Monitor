@@ -1,0 +1,26 @@
+Arduino/sensors:
+LDR one leg  → A0
+LDR other leg → 5V
+10k resistor → A0 → GND (voltage divider)
+
+Flame Sensor long pin → A1
+Flame VCC → 5V
+Flame GND → GND
+10k resistor → A1/shortpin → GND (voltage divider)
+
+Sound Sensor AO → A2
+Sound Sensor VCC → 5V
+Sound Sensor GND → GND
+
+Stm32/PC  UART :
+UART2 RX/PA3
+UART2 TX/PA2
+
+Stm32/Leds:
+PA0 → Resistor 220Ω → LED → GND(Red)
+PA1 → Resistor 220Ω → LED → GND(yellow)
+PC1 → Resistor 220Ω → LED → GND(Green)
+
+
+
+
