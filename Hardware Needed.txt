@@ -1,0 +1,10 @@
+ Hardware Components :
+
+- Arduino Uno  
+- STM32 Nucleo L476RG  
+- Photoresistor (LDR)  
+- Flame sensor  
+- Sound sensor  
+- 3 × LEDs (Red, Yellow, Green)  
+- Breadboard and jumper wires  
+- Resistors (for LEDs and LDR)
